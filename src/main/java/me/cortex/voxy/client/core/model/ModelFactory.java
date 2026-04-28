@@ -373,7 +373,14 @@ public class ModelFactory {
 
             clientFluidStateId = this.idMappings[fluidStateId];
             if (clientFluidStateId == -1) {
-                throw new IllegalStateException("Block has a fluid state but fluid state is not already baked!!!");
+                Logger.error(
+                    "Block has a fluid state but fluid state is not already baked; rendering without fluid layer. " +
+                    "blockId=" + blockId +
+                    " blockState=" + blockState +
+                    " fluidState=" + blockState.getFluidState() +
+                    " fluidLegacyBlock=" + blockState.getFluidState().createLegacyBlock() +
+                    " fluidStateId=" + fluidStateId
+                );
             }
         }
 
@@ -478,7 +485,7 @@ public class ModelFactory {
         metadata |= isBiomeColourDependent?1:0;
         metadata |= layer == RenderType.translucent()?2:0;
         metadata |= needsDoubleSidedQuads?4:0;
-        metadata |= ((!isFluid) && !blockState.getFluidState().isEmpty())?8:0;//Has a fluid state accosiacted with it and is not itself a fluid
+        metadata |= ((!isFluid) && !blockState.getFluidState().isEmpty() && clientFluidStateId != -1) ? 8 : 0;//Has a fluid state accosiacted with it and is not itself a fluid
         metadata |= isFluid?16:0;//Is a fluid
 
         metadata |= cullsSame?32:0;
